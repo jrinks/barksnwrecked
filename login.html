@@ -1,0 +1,49 @@
+{% extends 'base.html' %} {% block content%}
+{% extends 'base.html' %} 
+
+{% block head %}
+<title>Index</title>
+{% endblock %}
+
+{% block body %}
+{# Cover Area Start #}
+<section id="hero-area" class="bg-blue-100 pt-48 pb-10">
+    <div class="container">
+      <div class="flex justify-between">
+        <div class="w-full text-center">
+          <h2 class="text-4xl font-bold leading-snug text-gray-700 mb-10 wow fadeInUp" data-wow-delay="1s">
+            Register
+            <br class="hidden lg:block">Pet Supplies That Shake Things Up! </h2>
+
+            <form action="" method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <fieldset>
+                        {{ form.username.label }}
+                        {{ form.username(class='form-control', placeholder='Username') }}
+                    </fieldset>
+                    <fieldset>
+                        {{ form.password.label }}
+                        {{ form.password(class='form-control', placeholder='Password') }}
+                    </fieldset>
+                    <fieldset>
+                        {{ form.remember_me }}
+                        {{ form.remember_me.label }}
+                    </fieldset>
+                    {{ form.submit(class='btn btn-primary') }}
+                </div>
+            </form>
+            
+       
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  {# Cover Area End #}
+
+  
+
+{% endblock %}
+
+{% endblock content %}
