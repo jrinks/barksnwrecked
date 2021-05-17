@@ -1,0 +1,9 @@
+BarknWreked-  An e-commerce pet store selling dog and cat products. 
+by Felix Lopez and Jessica Rinks
+
+Jessica adapted a free htmt index page template and adjusted it to work with Flask. 
+Jessica wrote most of the HTML.  The CASS came from the template.
+Felix wrote most of the content of the routes, modules, forms. 
+Jessica wrote the content for the products table. 
+Jessica and Felix worked together via zoom on integrating routes and html. 
+
