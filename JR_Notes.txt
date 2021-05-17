@@ -1,0 +1,946 @@
+Once you've forked Brians, here's how to update it:
+update from Brian's Upstream
+git remote add upstream https://github.com/bstanton773/apr_intro_to_flask.git
+git pull upstream tuesday
+
+Step 1 - Installing everything
+#Quickstart VENV and Flask
+kekambas_venv\Scripts\activate
+pip install Flask
+set FLASK_APP=run.py
+set FLASK_ENV=developement
+set FLASK_DEBUG=1
+Flask run
+#install Flask-WTF
+pip install Flask-WTF
+#install SQLAlchemy
+pip install flask-sqlalchemy
+#Install Flask-Migrate
+pip install Flask-Migrate
+#make a .env file and put this in it:
+set FLASK_APP=run.py
+set FLASK_ENV=developement
+set FLASK_DEBUG=1
+#Install the .env:
+pip install python-dotenv
+#make a requirements file
+#first create a requirements.txt file in your project directory
+pip install -r requirements.txt
+#freeze requirements file
+pip freeze > requirements.txt
+
+#if you get a database error run this
+#this grabs the latest version of the database 
+flask db upgrade
+
+
+2- create basic folder structure
+app folder
+inside app folder create: 
+    templates folder 
+    static folder 
+    __init__.py
+    views.py
+    models.py
+    forms.py
+.gitignore
+config.py
+run.py
+
+#create template files for the pages and elements you think you'll need
+base.html
+index.html
+register.html
+nav.html
+
+Now start adding code to your files
+3- add code in the __init__ to instantiate an instance of Flask
+4- add code to run.py to call our app function
+5- add routes which are wrapper functions that send data to certain pages
+
+
+
+Before you start create a directory for your project
+#deactivate your condas before you activate your flask
+1. check your python version make sure you are running python 3
+--in termal enter "python - V"
+2. create virtual environment
+--in terminal type "python -m venv kekambas_venv"
+3. activate the virtual environment by runing the activate.bat You have to activate every time you open VScode (unless you tell VScode to run it automatically)
+--in terminal enter in "kekambas_venv\Scripts\activate"
+--once the ven has been activated you'll see (kekambas_env) in your terminal. Note- to deactivate your venv, type "deactivate" into the cmd
+4. lets use pip to install flask
+--pip install flask
+Note- What is Pip? "python package manager" 
+5. so now if you run pip list in the cmd it will show new items such as Flask, itsdangerous etc. and the version numbers. Pay attention to what versions you are using when you start your project because you'll need to use those version for your applications lifetime. So if there's an automatic update and if the new vversion of the package no longer supports some aspects of your code, then it will break your code. So you need to keep track of which versions you used when you created your program. 
+6. pip freeze
+click==7.1.2
+Flask==1.1.2
+itsdangerous==1.1.0
+Jinja2==2.11.3
+MarkupSafe==1.1.1
+Werkzeug==1.0.1
+7tell python to run pip freeze and save the text file call requirements
+"pip freeze > requirements.txt"
+Note: later you could use the requirements.txt to create a new virtual environment 
+9. install a requirements file that already exists use "pip install -r requirements.txt"
+The requirements.txt is just a list of required packages and versions. So any user can grab the project's requirements.txt and use that to create their own matching venv. 
+10. import flask 
+"import flask"
+11. create an app folder that will __init__ and other stuff like routes.py
+12. inside the app folder, create a file called __init__ and paste this code into the body of that file
+"from flask import Flask
+app = Flask(__name__)
+from app import routes"
+This is telling the program to import method app from module app and to run the method app, which in this case creates a new instance of the class Flask.
+13. Create a run.py file outside of your app folder.  This will contain the following code which basically tells the program to run the __init__ which establishes an instance of Flask. 
+"from app import app"
+14.If you haven't already, beforee we run run.py lets create an environmental variable called flaskapp by typing this into your cmd "set FLASK_APP=run.py"
+#we have set an environmental variable called FLASK_APP to equal the run.py. So now we can use the words FLASK_APP to initiate run.py.
+15 Create a file called .env and populate it with the following
+"FLASK_APP=run.py
+set FLASK_ENV=developement
+set FLASK_DEBUG=1
+16 Install the .env by
+"pip install python-dotenv"
+17. start flask:
+"flask run"
+18. if there's a problem and you need to see if your app variable has been created correctly type "echo FLASK_APP" and it should return "FLASK_APP"  if you've set things up correctly. 
+19. If you are still having problems make sure you set up your __init__.py correctly
+20. OK! so now you've started Flask
+Templates!
+1. now lets create some html templates 
+2. if you don't already have one, inside your app folder create a templates folder
+3. templates will consist of your base template and other page specific templates
+
+.....
+Notes from Day 2
+We want to add a form that can allow users to register and send that data to our database.
+### first create the form using flask WTF
+1. install flask WTF- "pip install Flask-WTF"
+2. pip install email-validator
+3. pip freeze > requirements.txt
+#you will also need a secret key to use WTF
+4. go to your confic.py and add "    SECRET_KEY= os.environ.get("SECRET_KEY") or "you-will-never-guess" "
+
+##create new forms.py file in forms
+see form.py and register.html
+
+
+----------from forms.py
+''' code examples  here https://flask-wtf.readthedocs.io/en/stable/quickstart.html#creating-forms '''
+''' info about token security etc https://www.imperva.com/learn/application-security/csrf-cross-site-request-forgery/ '''
+
+from typing import ByteString
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, EqualTo, Email
+
+#this is our user input form which is a instance of class
+#now we have to import it into routes
+class UserInfoForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    confirm_pass = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField()
+-----------
+------------ on routes------
+----we added this: 
+
+from app.forms import UserInfoForm
+#above to add form
+
+----and this
+@app.route('/register')
+def register():
+    title = 'REGISTER'
+    form = UserInfoForm()
+    return render_template('register.html', title=title, form=form)
+---------
+
+--------now update the registration.html page so it looks similar to this
+--------note that the below code probably has bugs, merge from upstream for reccect version. 
+
+<form action="">
+    {{form.hidden_tag()}}
+    <div class="form-group">
+        <fieldset>
+            <!--This is the label-->
+            {{form.username.label}}
+            <!--This is the form-->
+            {{form.username(class="form-control", placeholder+"Username")}}
+
+        </fieldset>
+
+        <fieldset>
+            <!--This is the label-->
+            {{form.email.label}}
+            <!--This is the form-->
+            {{form.email(class="form-control", placeholder+"email")}}
+
+        </fieldset>
+        <fieldset>
+            <!--This is the label-->
+            {{form.password.label}}
+            <!--This is the form-->
+            {{form.password(class="form-control", placeholder+"password")}}
+
+        </fieldset>
+
+        <fieldset>
+            <!--This is the label-->
+            {{form.confirm_pass.label}}
+            <!--This is the form-->
+            {{form.confirm_pass(class="form-control", placeholder+"confirm password")}}
+
+        </fieldset>
+
+        <fieldset>
+            <!--This is the label-->
+            {{form.confirm_pass.label}}
+            <!--This is the form-->
+            {{form.confirm_pass(class="form-control", placeholder+"confirm password")}}
+
+        </fieldset>
+
+        <fieldset>
+            <!--This is the label-->
+            {{form.confirm_pass.label}}
+            <!--This is the form-->
+            {{form.confirm_pass(class="form-control", placeholder+"confirm password")}}
+
+        </fieldset>
+
+    </div>
+</form>
+<!---hidden tag method creates security token for password -->
+----------------------------
+-----------ALSO ON THE routes page, add methods=["GET", "POST"]
+
+@app.route('/register', methods=["GET", "POST"])
+
+-----------------------------------------
+
+------now add request to import stuff on routes.py, which will allow us to look at the requests
+
+from flask import render_template, request
+ 
+--------- also on routes, add if request.method statement to def register()
+--------which is basicaly saying, when there is a request, do something
+-------currently we are just printing
+-------also add and form.validate_on_submit(): to if statement which will check to see if the form is valid
+
+
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    title = 'REGISTER'
+    form = UserInfoForm()
+    if request.method == "POST" and form.validate_on_submit():
+        print("Post method!")
+    return render_template('register.html', title=title, form=form)
+
+
+----------
+
+------now add username email password as things that are returned under the if statement. 
+
+
+if request.method == "POST" and form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        print(username, email, password)
+------------
+
+
+----trick----see all your file changes one by one and decide if you want to add them to your commit before you commit
+git add -p   
+
+
+
+-----create a style.css inside a css folder inside a static folder inside your app folder
+add a .banner {} style 
+a background image url 
+background size , height
+
+add a style for the .header-text
+with styling display justify-content
+padding-top
+lifetimetop color etc. 
+
+These two will style the .banner and the .header-text elements on the index page
+
+Now you have to link your style.css to your base template header
+
+----Now let's connect our registration form to a database
+----so we need to create python class objects that act as the tables in our database
+----for this we will use SQLAlchemy
+https://flask-sqlalchemy.palletsprojects.com/en/2.x/
+----to install it type this into your CMD "pip install flask-sqlalchemy"
+then "pip freeze > requirements.txt"
+We are following the steps here: quickstart guide: https://flask-sqlalchemy.palletsprojects.com/en/2.x/quickstart/
+
+
+
+
+
+------ add this to __init__
+from flask_sqlalchemy import SQLALchemy
+
+......
+
+db = SQLAlchemy(app)
+
+---------NOw add this to config
+
+basedir = os.path.abspath(os.path.dir(__file__))
+...
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///' + os.path.join(basedir, 'app.db'
+
+------------------------
+
+### now set up a models.py file in app
+
+--------
+from app import db
+#import this so we can hash the password
+#a hashed password takes a password, runs a function on it and runs a trap door algo that returns a #big ole hash string so in the database the password will be saved as this hash string, not as the #actual password
+
+from werkzeug.security import generate_password_hash
+
+
+#this is where we initate a class of User which is a database and then we define our columns 
+
+class User(db.Model):
+    #make our columns
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False, unique=True)
+    email = db.Column(db.String(150), nullable=False, unique=True)
+    password = db.Column(db.String(256), nullable=False)
+
+
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email
+        self.password = generate_password_hash(password)
+---------
+
+
+## Now we need to install Flask Migrate
+in command prompt run "pip install flask-migrate"
+now we need to import it and create an instance in our init file
+
+add ", models" to the line below in __init__
+from app import routes, models
+
+add this to __init__
+from flask_migrate import Mirgrate(app=None, db=None, directory='migrations', **kwargs)
+
+-------in your routes file add
+ummm i think i missed it
+
+----to view sql lite in your browser you can use the sqlitebrowser.org, but we will eventually be using postgress (there are also vc code database exentions you can use)
+
+------ run "flask db upgrate" to grab the most recent version of the database
+or something like that... you should probably google this
+
+
+When starting a new project or if your database gets all screwed up and you want to start from scratch (id delete everythintg in your database) you can do so by first right click and deleting your app.db file and your migrations file.  Then in the flask shell type:
+flask db init
+flask db migrate
+flask db upgrade
+
+----this is what brian uses to view his database in browser http://sqliteviewer.flowsoft7.com/
+
+
+Now, here's how you add data into your database using SQL Alchemy
+do it in your flask shell
+--type "flask shell" into flask command line
+create instances to the database by using the \instance in comman line
+db1 = DB( your data goes here)
+Once you've crated these instances you sill have to db.sesssion.add them to your database
+"User.query.all()" will return a list of your users
+"User.query.filter_by(username='whatever username you're looking for'.all) will return a list of all your users that match the query
+"User.query.filer_by(id=1).first()"
+"User.query.filer(User.email.endswith("@codingtemple.coimn')).all()
+"User.query.order_by(user.id).all()"
+"User.query.order_by(user.id).all()"
+This is how we will interact with our database instead of using straight sql
+
+-------
+While the shell is useful for testing what what we REALLY want it to do is accept user input and put it in the database
+
+-we're about 1.5 hours into afternoon lecutre and i've lost track of what is going on
+--he's adding stuff to routes
+
+#add this at the top
+from app.models import ....
+
+#add this under the register function
+new_user = User()
+db.session.add(new_user)
+db.session.commit()
+
+#add a redirect somewhere in routes....
+add redirect stuff at the top
+add redirect in the If statement
+make sure your HTML4 is defined
+
+----Now what's next?
+Flash Message Flashing
+First create a new template file message.html
+{% with messages = get_flashed_messages()%}
+    {% if messages %}
+        {% for message in messages: %}
+        <div class="alert alert-warning alert-dismissible from show" role="alert">
+            <stong {{message}}: </strong?
+            <button type="button" class=":btn-close" data-bs-dismiss+"alert"aria-label="close":></button?
+            </div>
+        {% endfor %}
+
+        flash("yuou have succesffuly registered for our site!")
+        return redirect(url_something or another)
+   {% endif %}
+
+{% endblock %}
+
+#you also need to import flash somewhere, not sure exactly where
+#you'll also need to add a reference to this in your base template. 
+
+#you can change the dolor of the message banner
+
+
+#Message CAtegories: 
+add message categories by adding categories into the second cargument of the flash function
+#this was around 1 hour 50 in the afternoon lecture.
+
+
+-----Now lets add a check to see if username or email already exists in routes add this under def register: existing_user = User.query.filer((user.uersname == username) | (User.email == email))
+
+if existing_user:
+    flash("that username or email alrady exists" Please try again", "danger")
+    return redirect(url_+four('register'))
+---you can see how we have , "danger" as the second argument in flash... that's what will give it the red color
+
+
+--NOw we want to CREATE A NEW TABLE called "posts" where our user can create posts
+--in model.py add a new model 
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50))
+    body = db.Column(db.String(300))
+    date_created = db.Coolumn(db.DateTime, nullable=False, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeighKey('user.id', nullable=False))
+
+    def __init__(self, title, body user_id):
+    self.title = title
+    self.body = body
+    self.user_id = user
+
+
+--also add this at the top to import datetime    
+from datetime import datetime
+
+--but we need to connect the above user_id to the user table or wahtever lol
+--we need to relate the user_id in POst to our user_id in User
+--So to do that you'll add this to the user table 
+posts = db.relationship('Post', backref='author', lazy='dynamic')
+
+
+---ok now add a repr method in our routes 
+
+def __repr__(self):
+return f"<User {self.username}>"
+
+---so now we've created our posts table nad put in our model
+---you can oepn flask shell to text
+from app.models import Post
+new_post = Post("coding is cool", "coding is super neat and everyone should love it", 1)
+db.session.add(new_post)
+db.session.commit()
+from app.models import Useru= User.qyery.get(1)
+new_post.author.postsnew.post.author
+u.posts.all()
+#again, i didn't copy this down super correctly. 
+
+
+---
+go back to routes.py to your def index
+change "items" to "posts"
+"posts" : post.query.all(),
+then go to your index.html and put 
+{% for post in posts %}
+<div class="card">
+     and in here define your content you want to show
+</div>
+
+---------
+flask bd init
+flask bd migrate
+flask db upgrate
+
+
+
+
+-----------Day 3--------
+-------Flask Login
+
+#install flask Login
+flask Login
+
+#inherit from the user mixin class
+
+add this to your __init__
+from flask_login import Loginmanager
+login = Loginmanager(app)
+
+#Add stuff to your models
+
+from flask_login import UserMixin
+
+@login.user_loader
+    def load_user(user_id):
+    return User.query.get(user_id)
+
+and add "login" to from app import user,login
+
+from flask_login import render_template, logout_user, logout_required
+
+#add this to your __init__
+login.login_view = 'index'
+login.login_message_category = 'danger'
+
+#add a route for the login
+@app.route('/login')
+    def login():
+        return render_template('login.html')
+
+#now lets create a form in forms.py
+
+class LoginForm(FlaskForm):
+    username = StringField('Username", validators=[DataRequired()]
+    password = PasswordField('Password', validators=[DataRequired()]
+    submit = SubmitField()
+
+
+in routes add LoginForm here: 
+from app.forms import UserInfoForm, LoginForm
+
+#make your login.html
+
+#update routes to include GET and POST methods on your @
+
+#now add more stuff to your model to grab any data from the form and query to see if the user already exists
+this is all in the If statement
+add some password hash stuff on there
+it queries users to look for a username, if there is it will return the userotherwise it will return None
+if the user does exist it will check the password hash to see if the hash and the new password matches and if it doesn't match we'll flash a "incorrect password" message. 
+
+# add a remember me field in the from. 
+
+##now add a  remember me button on the login.html page using special bootstrap classes
+
+#and now in the routes in the login user function add a remember parameter boolean
+#and flash a sign saying "you have successfully logged in"
+#and return a redirect for the index page. 
+
+
+#now on routes.py index method, add a thing to look for current user and return the user info and display it on the index page.
+
+#now add the login page to the nav backref
+nav.html
+get rid of the drop down 
+get rid of the search form (but I like it)
+
+---lucntime
+
+#So now we want to create a page that will allow users to create posts
+create a new template called createpost.html
+extends 'base.html'
+inside the block content 
+
+#put in a route sending stuff to the new html page
+
+#create a new form in form.py 
+class PostForm(FlaskForm):
+    title = StringField"Title", validators=[DataRequired()])
+    body = StringField"body", validators=[DataRequired()])
+    submit = SubmitField(), validators=[DataRequired()])
+
+#we already have a databaes for post but we don't have a post form or route or html (we just started creating stuff)
+
+#go back to routes
+add to from post-forms import postform
+add wrapper sending stuff to the postform html
+make sure to add methods Get and Pst to the top line of your def
+the def will also have an if requst.method =="post" and form.validate_on_submit(): 
+    post_title = form.title.data  
+    body = form.body.data
+    #form is the form, body is the column, data is the attribute
+    user_id = current_user.id
+    #get the current user id
+    
+    #now we're going to create an instance of the post
+    new_post = POst(post_title, post_body, user_id)
+
+    db.session.add(new_post)
+    db.session.commit
+    flash a message "you have created a post" 
+
+
+#go back to html
+in the body create a form.hidden_tag 
+and a form.title.label
+for.title(class='form-control', placeholder="Title")
+do the same thing for body
+and add a submit button
+
+
+--------OK now lets set up the ability to send email to our users
+# we will use send grid
+#sign up for sendgrid
+#set up an API key
+#save the API key to your .env
+SENDGRID_API_KEY=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
+MAIL_SERVER = 'smtp.sendgrid.net'
+    
+#ALSO ADD this to your config
+MAIL_PORT = 587
+MAIL_USE_TLS = True
+MAIL_USERNAME = 'apikey'
+MAIL_PASSWORD = os.environ.get('SENDGRID_API_KEY')
+MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER')
+
+
+#in command prompt
+pip install flask_mail
+pip freeze > requirements.txt
+
+#add to your init
+from flask_mail import Mail
+.... i got lost... do all this stuff
+
+#in flask shell , send an email
+flask shell
+from app import mail
+from flask_mail import Message
+msg = Message('Twilio SendGrid Test Email', recipients=['recipient@example.com'])
+msg.body = 'This is a test email!'
+msg.html = '<p>This is a test email!</p>'
+mail.send(msg)
+
+
+#all the setps are here
+https://www.twilio.com/blog/using-twilio-sendgrid-to-send-emails-from-python-flask-applications
+
+#so now what we want is to add this stuff to routes
+add this under def register right after the message flash msg = Message('Thanks for signing up"')
+        msg.body = f'(Dear {username} thank you for signing up)'
+        mail.send(msg)
+
+also add 
+from app import mail
+from flask_mail import Message
+
+
+------------------------
+DAY 4
+------Blueprints!  help organize big flask palletsprojects
+---so we're basically gonna be moving parts of our prjects around into their own little compartments
+
+
+1. in your app folder, create a new folder called Blueprints
+2. inside that folder create a new folder and call it auth (as in authenticate)--then put an __init__ inside the auth folder
+3. in this new __init__
+#import the blueprint module
+from flask import Blueprint
+
+bp = Blueprint('auth', __name__, url_previx='/auth)
+
+4. now inside the auth folder create a routes.py file\
+now grab the register, login, and logout routes from our naim routes and thow them into the auth routes These are the routes associated with the user authentication stuff
+
+5. In your auth/routes folder: 
+
+from . import bc as auth
+from flask import render_template, redirect, url_for, flash, requestfrom flash_login import login_user, logout_user
+from app import db, mail
+from flask_mail import Message
+from werkzeug......
+
+then change the @app to @auth
+because they are referring to the auth blueprint, no longer directly with the app. 
+
+6. create a new models.py inside your auth
+grab the user models and the user class from your models and put them in the new file
+Also in this new models.py add:
+
+from app import db, login
+from flask_login import UserMain
+from werzkeug,security import generate_password_hash
+
+7. now create a new file for forms.py in auth
+move user_info and login form from the old forms to the new auth/forms and add this at top:
+
+from flash_wtf import FlaskForm
+from wtforms import StringField,PasswordField,BooleanField,SubmitFeidl
+from wtforms.validators import DataRequired, Email, EqualTo
+
+8 now go back to auth/routes and add
+from .models import User
+from .forms import UserImputForm
+#(the dot in the .forms indications for the program to look in current folder not in main forms folder)
+
+9. Now we need to register the blueprint
+# serach "The Application Contect" on the flask site
+This means that instead of just having an __init__file that automatically creates everything, instead we will have a function that creates our app for us and registeres the blueprints on it. We are moving to an application factory pattern
+
+
+#in your original __init__
+
+db = SQLALchemy
+migrate = ....
+login = ...
+mail = .....
+
+
+def create app(config_class=Conjfig):
+    app = Flask(__name__)
+    app.config.form_object(config_class)
+    db.init_app(app)
+    migrate.init_app(app)
+    login.init_app(app)
+    mail.init_app(app)
+
+    with app.app_contecx():
+        from app.blueprints.auth import bp as auth
+        app.register_blueprint(auth)
+
+        from . import routes
+    
+    return app
+
+So, the sum up, we took out all the stuff related to authentication and we ghrew it iont our new auth/routes which is our blueprint. we create an instance of the blueprint in the routes
+
+
+10 go back to your auth/run and add:
+from app import CreateApp
+from . import routes, models
+app= Create_app()
+
+
+11. in your original routes, add "current app as ap"
+from flask import current_app as app
+
+12. remove from app/routes and remove all the import stuff you don't need anymore. 
+
+13. change your nav bar refs to reroute to the new template in the auth file. ,, 
+from:
+{{ url_for 'register' }}
+
+{{ url_for 'auth.register' }}
+
+in the above, 'register' is the name of the register function
+
+
+14. in our main init.py  change 
+login.login_view = 'login'
+tp: 
+login.login_view = 'auth.login'
+
+--------Now we will create a blueprint for your blog (posts)
+create a new folder called blog ... it should be at same level as auth so they are siblings.  Inside that folder add init forms and routes. 
+
+lets let brian build it and i'll pull it
+
+
+--------Shell context proceddor
+flask shell
+from app.blueprints.blogs.models import posts
+above is how you'd have to type in your flask shell to view your posts
+But instead of typing all that out we can set up a shell context proceddor which makes it easier. 
+
+
+in your run.py add some shit. 
+
+from app.blueprints.auth.models import User
+from app.blueprints.blog.models import Post
+
+@app.shell_context_processor
+    def make_shell_context.......
+......
+......
+
+-----------------CRUD
+these are the four operations of...... sometimg. 
+create
+read 
+update 
+delete 
+
+We've already done read(Get) and update(Post)
+
+
+
+in abb/blueprint/blog we will add 
+
+@log.routes('/myposts')
+@login_required
+def myposts():
+posts= Post.query.filder_by(user_it=current_user.id).all()
+
+
+
+
+--------------LUNCH-------------------
+
+So we just added teh myposts() route to our app blueprints blog file.  
+
+So, now to go your posts html and add some jinga to receive the posts and show it on the screen. But instead of retriving all the posts, we want to retrive one at a time. 
+
+@blog.route("/myposts")
+@login_required
+    def mypost():
+    title = ......
+    popsts = ......
+    return render template.......
+
+@blog.route("/posts/<int:post_id'>)
+def post_detial(post_id):
+    post = Post.qyery.get_of_404(post_id)
+    title = f'{post.title}'
+    return retnder_tempalte("post_detail.html', title=title, post=post)
+
+----now create a posts.html in your main templates page
+this page will show the author title content of the post
+and we'll have a button for "update post" and one for "delete post"
+(% extends 'base.html' %)
+(% block content %)
+<h1>{{ post.title }}</h1>
+<h1>Title: {{ post.title}}<h1>
+<h1>Written by: {{ post.author}}<h1>
+<br>{{ post.body }}<br>
+!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+  Launch demo modal
+</button><!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+(% endblock content %)
+
+
+This is just an example.... see the current git version for actual code.  
+
+----nwow go to nav and change which links display if the person is registered or is not registered
+
+{% if current_user.is_authenticated %}
+create post and my post nave goes here
+
+{% else%}
+register nav goes here
+{% end if%}
+
+
+-----now to go myposts.html
+add a link around the post title that will lead to the post page
+<a href='{{ url_for('blog.post_detail'), post_id=post.id) }}">
+put your post title <h> in here
+</a>
+
+
+------now we want to have an update post button on the mypost page that will let the person change the content of their post. 
+So we have to create an "update" route
+
+@blog.route('/posts/updates/<int:post_id'>)
+@login_requireddef post_update(post_id):
+    post = POst.query./get_or_404(post_id)
+    #to make sure the post the user is trying to update is a post that they own do this:
+    title = f'UPDATE {post.title}"
+    if post.author.id != current_usr.id:
+        flash("This isn't your post, yo!", "warning")
+        return redirect(url_for("myposts"))
+    else:
+        #grab the post
+        #get post.author.id
+        #if yes then get- display the form or post- display the form
+        #commit the changes to the database
+        update_form = Post(form()
+        
+    return render_template('post-update.html', ))
+
+
+-----now create a post_update.html
+
+{% extends "base.html %}
+
+{% block current%}
+
+<h3>Update Post {{ post.title }}</h3>
+<form action="" metho="POST">
+{{ form.hidden_tage() }}
+<div class="form_group">
+    <fieldset>
+        {{form.title.label}}
+        {{form.title(class='form-control', value=post.title)}}
+    <//fieldset>
+        {{form.submit(class="btn btn-success")}}}}  
+        {{form.body(class='form-control', value=post.body)}}
+</div>
+
+---now we need to go back to our route and allow methods=['GET', 'POST'] on our @blog.route('/posts/update/<int.post_id>")
+
+---also add an if that tells it what to do if post is selected. 
+
+if request.method =='POST and update_form.validate_on_submit():
+    post_title = update_form.title.datapost_body = update_form.body.data
+    post.title = post_titlepost.body = post_body
+    db.session.commit()
+
+return redirect(url_for('blog.post_detail", post_id=post.id))
+
+----on your post_detail.html add
+<a href="{{ url_form}}...........
+
+
+Finishing up CRUD----
+DELETE----
+
+#get the post you want to delete
+#db.session.delete
+#db.session.commit
+
+@blog.route("/posts/delete/<int:post_it>)", method=POST)
+@login_requires
+def post_delete(post_id):
+post = post.query.etg_or_404(post_ID)
+title = f'UPDATE {post.title}"
+    if post.author.id != current_usr.id:
+        flash("This isn't your post, yo!", "warning")
+        return redirect(url_for("myposts"))
+    else:
+        db.session.delete(post)
+        db.session.commit()
+        flash(f'(post.title} has been deleted', 'info'))
+    return redirect(url_for('blog.myposts'))
+
+#now go to the html and change the action on the delete button  form action=:{{ url_for('blog.post_delete', post_iod=post.id }} method="POST")}}
+    <input type="submit" value="Confirm Delete" class="tbn tbn-danger">
+

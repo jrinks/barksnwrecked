@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" style="scroll-behavior: smooth;">
+  <head>
+    
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta1/css/bootstrap.min.css">
+   
+   
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename= 'css/style.css') }}">
+   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename= 'css/animate.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename= 'css/tiny-slider.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename= 'css/tailwind.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename= 'css/img/favicon/png>') }}">
+    
+    <title>BW | {{ title }}</title>
+   
+  </head>
+   
+  <body>
+    
+    {% include 'nav.html' %} 
+    
+
+    {% block body %} 
+    {% endblock %}
+
+
+    {# Footer Start #}
+    <footer id="footer" class="bg-gray-800 py-16">
+      <div class="container">
+        <div class="flex flex-wrap">
+          <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 wow fadeInUp" data-wow-delay="0.2s">
+            <div class="mx-3 mb-8">
+              <div class="footer-logo mb-3">
+                <img src="assets/images/barksnwreck_logo.png" alt="">
+              </div>
+              <p class="text-gray-300">This website was created by Felix Lopez and Jessica Rinks using Bootstrap, Flask, SQLAlchemy, CRUD, and Sendgrid.</p>
+            </div>
+          </div>
+          
+          <div class="w-full sm:w-1/2 md:w-1/2 lg:w-1/4 wow fadeInUp" data-wow-delay="0.8s">
+            <div class="mx-3 mb-8">
+              <h3 class="font-bold text-xl text-white mb-5">Find us on</h3>
+        
+              <ul class="social-icons flex justify-start">
+                <li class="mx-2">
+                  <a href="https://www.facebook.com/Boo"
+                    class="footer-icon hover:bg-indigo-500">
+                    <i class="lni lni-facebook-original" aria-hidden="true"></i>
+                  </a>
+                </li>
+                <li class="mx-2">
+                  <a href="https://twitter.com/TheRealOtisFuzz?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+                    class="footer-icon hover:bg-blue-400">
+                    <i class="lni lni-twitter-original" aria-hidden="true"></i>
+                  </a>
+                </li>
+                <li class="mx-2">
+                  <a href="https://www.instagram.com/venustwofacecat/?hl=en"
+                    class="footer-icon hover:bg-red-500">
+                    <i class="lni lni-instagram-original" aria-hidden="true"></i>
+                  </a>
+                </li>
+                <li class="mx-2">
+                  <a href="#"
+                    class="footer-icon hover:bg-indigo-600">
+                    <i class="lni lni-linkedin-original" aria-hidden="true"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>     
+    </footer> 
+    {# Footer End #}
+
+    <section class="bg-gray-800 py-6 border-t-2 border-gray-700 border-dotted">
+      <div class="container">
+        <div class="flex flex-wrap">
+          <div class="w-full text-center">
+            <p class="text-white">Template Designed and Developed by <a class="text-white duration-300 hover:text-blue-600" href="https://tailwindtemplates.co" rel="nofollow">TailwindTemplates</a> and <a class="text-white duration-300 hover:text-blue-600" href="https://uideck.com" rel="nofollow">UIdeck</a></p>
+          </div>
+        </div>
+      </div>
+    </section>   
+
+    {# All JS Here #}
+
+    <script src="assets/js/wow.js"></script>
+    <script src="assets/js/tiny-slider.js"></script>
+    <script src="assets/js/contact-form.js"></script>      
+    <script src="assets/js/main.js"></script>      
+  </body>
+</html>
